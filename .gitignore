@@ -1,0 +1,27 @@
+/src-tauri/target/
+/src-tauri/gen/
+*.db
+*.db-wal
+*.db-shm
+*.log
+Thumbs.db
+desktop.ini
+/release/
+
+# Local configuration and credentials must never enter either repository.
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.p12
+*.key
+*.crt
+*.cer
+*.dmp
+*.dump
+*.sqlite
+*.sqlite3
+
+# Zwischenablage des MSIX-Baus
+target-msix/

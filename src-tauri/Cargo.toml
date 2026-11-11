@@ -1,0 +1,65 @@
+[package]
+name = "filetriage"
+version = "0.1.0"
+edition = "2024"
+description = "FileTriage - fast, local and reversible file organization for Windows"
+authors = ["Björn Boldt"]
+license = "PolyForm-Noncommercial-1.0.0"
+rust-version = "1.85"
+
+[features]
+# Ohne Vorgabe leer: Der umschaltbare Lizenzanbieter darf in einem verkauften
+# Programm nicht einmal uebersetzt werden.
+default = []
+# Erlaubt, den Lizenzzustand ueber FILETRIAGE_LICENSE vorzugeben. Nur fuer
+# Entwicklung und Abnahme - niemals in einem Store-Paket.
+dev-license = []
+
+[lib]
+name = "filetriage"
+path = "src/lib.rs"
+
+[[bin]]
+name = "filetriage"
+path = "src/main.rs"
+
+# Exakte Versionen: Untergrenzen hier, reproduzierbar ueber die eingecheckte Cargo.lock.
+[dependencies]
+base64 = "0.23.1"
+blake3 = "1.8.6"
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png", "gif", "webp", "bmp", "tiff"] }
+jwalk = "0.9.0"
+kamadak-exif = "0.6.1"
+notify = "8.2.0"
+parking_lot = "0.12.5"
+rayon = "1.12.0"
+rfd = { version = "0.17.2", default-features = false }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tauri = { version = "2.11.5", default-features = false, features = ["wry", "common-controls-v6"] }
+thiserror = "2.0.20"
+tracing = "0.1.44"
+tracing-appender = "0.2.5"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+trash = "5.2.6"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.56.0", features = ["Win32_Foundation", "Win32_Storage_EnhancedStorage", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_SystemServices", "Win32_UI_Shell", "Win32_UI_Shell_PropertiesSystem"] }
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+# Hinweis: Die Pfade des Entwicklerprofils und der Crate-Registry landen ohne
+# Gegenmassnahme im fertigen Programm - nachweisbar mit
+# tools/audit_release.py. Das Profilfeld `trim-paths` waere der saubere Weg,
+# ist in Cargo 1.97 aber noch nicht stabil. Stattdessen setzt
+# tools/build-release.ps1 die passenden --remap-path-prefix-Flags; dort
+# koennen die Pfade zur Bauzeit ermittelt werden, statt hier fest zu stehen.
